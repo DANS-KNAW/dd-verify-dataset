@@ -23,15 +23,15 @@ verifyDataset:
     - name: coordinatesWithinBounds
       schemes:
         - scheme: RD
-        # minX:
-        # maxX:
-        # minY:
-        # maxY:
+          minX: -7000
+          maxX: 300000
+          minY: 289000
+          maxY: 629000
         - scheme: latlon
-        # minX:
-        # maxX:
-        # minY:
-        # maxY:
+          minX: -180
+          maxX: 180
+          minY: -90
+          maxY: 90
 
     - name: identifiersCanBeResolved
       resolvers:
