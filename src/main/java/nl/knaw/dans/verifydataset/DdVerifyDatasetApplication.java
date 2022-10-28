@@ -17,8 +17,10 @@
 package nl.knaw.dans.verifydataset;
 
 import io.dropwizard.Application;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.knaw.dans.lib.dataverse.DataverseClient;
 
 public class DdVerifyDatasetApplication extends Application<DdVerifyDatasetConfiguration> {
 
@@ -38,6 +40,9 @@ public class DdVerifyDatasetApplication extends Application<DdVerifyDatasetConfi
 
     @Override
     public void run(final DdVerifyDatasetConfiguration configuration, final Environment environment) {
+        final var client = new JerseyClientBuilder(environment).using(configuration.getJerseyClient())
+            .build(getName());
+        DataverseClient dataverseClient = configuration.getDataverse().build();
 
     }
 

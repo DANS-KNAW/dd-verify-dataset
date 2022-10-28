@@ -16,11 +16,49 @@
 
 package nl.knaw.dans.verifydataset;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import io.dropwizard.client.JerseyClientConfiguration;
+import nl.knaw.dans.lib.util.DataverseClientFactory;
+import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class DdVerifyDatasetConfiguration extends Configuration {
 
+    @Valid
+    @NotNull
+    private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
+
+    @Valid
+    @NotNull
+    private DataverseClientFactory dataverse;
+
+    @Valid
+    @NotNull
+    private VerifyDatasetConfig verifyDataset;
+
+    public @Valid @NotNull DataverseClientFactory getDataverse() {
+        return dataverse;
+    }
+
+    public void setDataverse(@Valid @NotNull DataverseClientFactory dataverse) {
+        this.dataverse = dataverse;
+    }
+
+    public JerseyClientConfiguration getJerseyClient() {
+        return jerseyClient;
+    }
+
+    public void setJerseyClient(JerseyClientConfiguration jerseyClient) {
+        this.jerseyClient = jerseyClient;
+    }
+
+    public VerifyDatasetConfig getVerifyDataset() {
+        return verifyDataset;
+    }
+
+    public void setVerifyDataset(VerifyDatasetConfig verifyDataset) {
+        this.verifyDataset = verifyDataset;
+    }
 }
