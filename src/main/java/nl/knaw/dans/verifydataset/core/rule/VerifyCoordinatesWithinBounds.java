@@ -15,21 +15,68 @@
  */
 package nl.knaw.dans.verifydataset.core.rule;
 
+import nl.knaw.dans.lib.dataverse.model.dataset.CompoundField;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
+import nl.knaw.dans.lib.dataverse.model.dataset.PrimitiveSingleValueField;
+import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
 import nl.knaw.dans.verifydataset.core.config.CoordinatesWithinBoundsConfig;
-import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.math.NumberUtils;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 public class VerifyCoordinatesWithinBounds implements VerifyDatasetMetadata {
-    private Map<String, CoordinatesWithinBoundsConfig> config;
+    private static final PrimitiveSingleValueField defaultValue = new PrimitiveSingleValueField();
+
+    private final Map<String, CoordinatesWithinBoundsConfig> config;
 
     public VerifyCoordinatesWithinBounds(Map<String, CoordinatesWithinBoundsConfig> config) {
-        this.config = config;
+        this.config = new HashMap<>();
+        if (!config.keySet().containsAll(Set.of("RD", "latlon")))
+            throw new IllegalStateException(String.format("Expecting at least schemes 'RD' and 'latlon' but got %s", config.keySet()));
+        this.config.put("longitude/latitude (degrees)", config.get("latlon")); // TODO confusion between latlon and longitude/latitude
+        this.config.put("RD (in m.)", config.get("RD"));
+        this.config.putAll(config);
     }
 
     public List<String> verify(Map<String, MetadataBlock> mdBlocks) {
-        throw new NotImplementedException();
+        List<String> messages = new LinkedList<>();
+        var mdBlock = mdBlocks.get("dansTemporalSpatial");
+        mdBlock.getFields().stream()
+            .filter(f -> f.getTypeName().equals("dansSpatialPoint"))
+            .filter(f -> f instanceof CompoundField)
+            .map(f -> ((CompoundField) f).getValue())
+            .forEach(p -> messages.addAll(verifyPoints(p)));
+        return messages;
+    }
+
+    private List<String> verifyPoints(List<Map<String, SingleValueField>> points) {
+        return points.stream()
+            .map(this::verifySinglePoint)
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.toList());
+    }
+
+    private String verifySinglePoint(Map<String, SingleValueField> attributes) {
+        String scheme = attributes.getOrDefault("dansSpatialPointScheme", defaultValue).getValue();
+        String xs = attributes.getOrDefault("dansSpatialPointX", defaultValue).getValue();
+        String ys = attributes.getOrDefault("dansSpatialPointY", defaultValue).getValue();
+        var bounds = config.get(scheme);
+        if (!NumberUtils.isParsable(xs) || !NumberUtils.isParsable(ys) || bounds == null)
+            return format("dansSpatialPoint(x=%s, y=%s, scheme=%s) has an invalid number and/or the scheme is not one of %s", xs, ys, scheme, config.keySet());
+        else {
+            var x = NumberUtils.createNumber(xs).floatValue();
+            var y = NumberUtils.createNumber(ys).floatValue();
+            if (x < bounds.getMinX() || x > bounds.getMaxX() || y < bounds.getMinY() || y > bounds.getMaxY())
+                return format("dansSpatialPoint(x=%s y=%s, scheme=%s) does not comply to %s", xs, ys, scheme, bounds);
+            else
+                return "";
+        }
     }
 }

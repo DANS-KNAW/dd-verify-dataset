@@ -19,7 +19,6 @@ package nl.knaw.dans.verifydataset;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.configuration.ConfigurationException;
-import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
@@ -41,11 +40,9 @@ public class DdVerifyDatasetConfigurationTest {
         factory = new YamlConfigurationFactory<>(DdVerifyDatasetConfiguration.class, Validators.newValidator(), mapper, "dw");
     }
 
-    private final ConfigurationSourceProvider sourceProvider = FileInputStream::new;
-
     @Test
     public void canReadDist() throws IOException, ConfigurationException {
-        var config = factory.build(sourceProvider, "src/main/assembly/dist/cfg/config.yml");
+        var config = factory.build(FileInputStream::new, "src/main/assembly/dist/cfg/config.yml");
         assertEquals(629000, Objects.requireNonNull(config.getVerifyDataset().getCoordinatesWithinBounds().get("RD")).getMaxY());
     }
 

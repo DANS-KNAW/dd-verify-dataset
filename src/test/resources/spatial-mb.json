@@ -1,0 +1,74 @@
+{
+    "displayName": "Temporal and Spatial Coverage",
+    "name": "dansTemporalSpatial",
+    "fields": [
+      {
+        "typeName": "dansSpatialPoint",
+        "multiple": true,
+        "typeClass": "compound",
+        "value": [
+          {},
+          {
+            "dansSpatialPointX": {
+              "typeName": "dansSpatialPointX",
+              "multiple": false,
+              "typeClass": "primitive",
+              "value": "0"
+            },
+            "dansSpatialPointY": {
+              "typeName": "dansSpatialPointY",
+              "multiple": false,
+              "typeClass": "primitive",
+              "value": "0"
+            },
+            "dansSpatialPointScheme": {
+              "typeName": "dansSpatialPointScheme",
+              "multiple": false,
+              "typeClass": "controlledVocabulary",
+              "value": "RD (in m.)"
+            }
+          },
+          {
+            "dansSpatialPointX": {
+              "typeName": "dansSpatialPointX",
+              "multiple": false,
+              "typeClass": "primitive",
+              "value": "1"
+            },
+            "dansSpatialPointY": {
+              "typeName": "dansSpatialPointY",
+              "multiple": false,
+              "typeClass": "primitive",
+              "value": "555000"
+            },
+            "dansSpatialPointScheme": {
+              "typeName": "dansSpatialPointScheme",
+              "multiple": false,
+              "typeClass": "controlledVocabulary",
+              "value": "RD (in m.)"
+            }
+          },
+          {
+            "dansSpatialPointX": {
+              "typeName": "dansSpatialPointX",
+              "multiple": false,
+              "typeClass": "primitive",
+              "value": "2"
+            },
+            "dansSpatialPointY": {
+              "typeName": "dansSpatialPointY",
+              "multiple": false,
+              "typeClass": "primitive",
+              "value": "3"
+            },
+            "dansSpatialPointScheme": {
+              "typeName": "dansSpatialPointScheme",
+              "multiple": false,
+              "typeClass": "controlledVocabulary",
+              "value": "longitude/latitude (degrees)"
+            }
+          }
+        ]
+      }
+    ]
+  }

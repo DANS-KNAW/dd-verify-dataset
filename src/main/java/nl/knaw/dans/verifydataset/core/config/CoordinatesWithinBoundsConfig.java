@@ -52,4 +52,14 @@ public class CoordinatesWithinBoundsConfig {
     public void setMaxY(Long maxY) {
         this.maxY = maxY;
     }
+
+    @Override
+    public String toString() {
+        return "CoordinatesWithinBoundsConfig{" +
+            "minX=" + minX +
+            ", maxX=" + maxX +
+            ", minY=" + minY +
+            ", maxY=" + maxY +
+            '}';
+    }
 }
