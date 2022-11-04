@@ -20,6 +20,7 @@ import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.lib.dataverse.model.dataset.PrimitiveSingleValueField;
 import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
 
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,5 +50,5 @@ public abstract class MetadataRule {
             .collect(Collectors.toList());
     }
 
-    public abstract String verifySingleField(Map<String, SingleValueField> attributes);
+    protected abstract String verifySingleField(Map<String, SingleValueField> attributes);
 }

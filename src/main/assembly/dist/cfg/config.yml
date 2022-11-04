@@ -21,7 +21,7 @@ dataverse:
 verifyDataset:
   identifiersCanBeResolved:
     ORCID: 'https://orcid.org/{id}'
-    ISNI: 'https://www.isni.org/isni/{id}'
+    ISNI: 'https://isni.oclc.org/xslt/DB=1.2/CLK?IKT=6102&TRM={id}'
   coordinatesWithinBounds:
     RD:
       minX: -7000

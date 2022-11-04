@@ -47,7 +47,7 @@ public class DdVerifyDatasetConfigurationTest {
         var config = factory.build(FileInputStream::new, "src/main/assembly/dist/cfg/config.yml");
         assertEquals(629000, Objects.requireNonNull(config.getVerifyDataset().getCoordinatesWithinBounds().get("RD")).getMaxY());
         assertArrayEquals(
-            List.of("https://orcid.org/{id}", "https://www.isni.org/isni/{id}").toArray(),
+            List.of("https://orcid.org/{id}", "https://isni.oclc.org/xslt/DB=1.2/CLK?IKT=6102&TRM={id}").toArray(),
             config.getVerifyDataset().getIdentifiersCanBeResolved().values().toArray()
         );
     }

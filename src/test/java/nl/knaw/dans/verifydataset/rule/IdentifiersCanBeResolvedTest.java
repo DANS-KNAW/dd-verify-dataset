@@ -38,9 +38,6 @@ public class IdentifiersCanBeResolvedTest {
         MetadataBlock mb = mdMapper.readValue(new File("src/test/resources/citation-mb.json"), MetadataBlock.class);
         List<String> actual = new IdentifiersCanBeResolved(config)
             .verify(Collections.singletonMap("citation", mb));
-        assertEquals(List.of(
-            "Not yet implemented: resolving https://orcid.org/0000-0003-2125-060X",
-            "Not yet implemented: resolving https://www.isni.org/isni/000000012281955X"
-        ), actual);
+        assertEquals(List.of("Not found https://orcid.org/0000-0001-2281-955X"), actual);
     }
 }

@@ -18,7 +18,7 @@
             "typeName": "authorName",
             "multiple": false,
             "typeClass": "primitive",
-            "value": "Einstein, A."
+            "value": "Barbapappa"
           },
           "authorIdentifierScheme": {
             "typeName": "authorIdentifierScheme",
@@ -30,7 +30,7 @@
             "typeName": "authorIdentifier",
             "multiple": false,
             "typeClass": "primitive",
-            "value": "0000-0003-2125-060X"
+            "value": "0000-0001-2281-955X"
           }
         },
         {
