@@ -15,28 +15,23 @@
  */
 package nl.knaw.dans.verifydataset.core.rule;
 
-import nl.knaw.dans.lib.dataverse.model.dataset.CompoundField;
-import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.lib.dataverse.model.dataset.PrimitiveSingleValueField;
 import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
 import nl.knaw.dans.verifydataset.core.config.CoordinatesWithinBoundsConfig;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-public class VerifyCoordinatesWithinBounds implements VerifyDatasetMetadata {
-    private static final PrimitiveSingleValueField defaultValue = new PrimitiveSingleValueField();
-
+public class CoordinatesWithinBounds extends MetadataRule {
     private final Map<String, CoordinatesWithinBoundsConfig> config;
 
-    public VerifyCoordinatesWithinBounds(Map<String, CoordinatesWithinBoundsConfig> config) {
+    public CoordinatesWithinBounds(Map<String, CoordinatesWithinBoundsConfig> config) {
+        blockName = "dansTemporalSpatial";
+        fieldName = "dansSpatialPoint";
         this.config = new HashMap<>();
         if (!config.keySet().containsAll(Set.of("RD", "latlon")))
             throw new IllegalStateException(String.format("Expecting at least schemes 'RD' and 'latlon' but got %s", config.keySet()));
@@ -45,25 +40,8 @@ public class VerifyCoordinatesWithinBounds implements VerifyDatasetMetadata {
         this.config.putAll(config);
     }
 
-    public List<String> verify(Map<String, MetadataBlock> mdBlocks) {
-        List<String> messages = new LinkedList<>();
-        var mdBlock = mdBlocks.get("dansTemporalSpatial");
-        mdBlock.getFields().stream()
-            .filter(f -> f.getTypeName().equals("dansSpatialPoint"))
-            .filter(f -> f instanceof CompoundField)
-            .map(f -> ((CompoundField) f).getValue())
-            .forEach(p -> messages.addAll(verifyPoints(p)));
-        return messages;
-    }
-
-    private List<String> verifyPoints(List<Map<String, SingleValueField>> points) {
-        return points.stream()
-            .map(this::verifySinglePoint)
-            .filter(s -> !s.isEmpty())
-            .collect(Collectors.toList());
-    }
-
-    private String verifySinglePoint(Map<String, SingleValueField> attributes) {
+    @Override
+    public String verifySingleField(Map<String, SingleValueField> attributes) {
         String scheme = attributes.getOrDefault("dansSpatialPointScheme", defaultValue).getValue();
         String xs = attributes.getOrDefault("dansSpatialPointX", defaultValue).getValue();
         String ys = attributes.getOrDefault("dansSpatialPointY", defaultValue).getValue();

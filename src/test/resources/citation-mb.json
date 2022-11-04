@@ -1,0 +1,121 @@
+{
+  "displayName": "Citation Metadata",
+  "name": "citation",
+  "fields": [
+    {
+      "typeName": "title",
+      "multiple": false,
+      "typeClass": "primitive",
+      "value": "x"
+    },
+    {
+      "typeName": "author",
+      "multiple": true,
+      "typeClass": "compound",
+      "value": [
+        {
+          "authorName": {
+            "typeName": "authorName",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "User01, Txest01"
+          },
+          "authorAffiliation": {
+            "typeName": "authorAffiliation",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "DANS"
+          },
+          "authorIdentifierScheme": {
+            "typeName": "authorIdentifierScheme",
+            "multiple": false,
+            "typeClass": "controlledVocabulary",
+            "value": "ORCID"
+          },
+          "authorIdentifier": {
+            "typeName": "authorIdentifier",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "blabla"
+          }
+        },
+        {
+          "authorName": {
+            "typeName": "authorName",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "y"
+          },
+          "authorIdentifierScheme": {
+            "typeName": "authorIdentifierScheme",
+            "multiple": false,
+            "typeClass": "controlledVocabulary",
+            "value": "ISNI"
+          },
+          "authorIdentifier": {
+            "typeName": "authorIdentifier",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "rababera"
+          }
+        }
+      ]
+    },
+    {
+      "typeName": "datasetContact",
+      "multiple": true,
+      "typeClass": "compound",
+      "value": [
+        {
+          "datasetContactName": {
+            "typeName": "datasetContactName",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "User01, Test01"
+          },
+          "datasetContactAffiliation": {
+            "typeName": "datasetContactAffiliation",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "DANS"
+          }
+        }
+      ]
+    },
+    {
+      "typeName": "dsDescription",
+      "multiple": true,
+      "typeClass": "compound",
+      "value": [
+        {
+          "dsDescriptionValue": {
+            "typeName": "dsDescriptionValue",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "x"
+          }
+        }
+      ]
+    },
+    {
+      "typeName": "subject",
+      "multiple": true,
+      "typeClass": "controlledVocabulary",
+      "value": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "typeName": "depositor",
+      "multiple": false,
+      "typeClass": "primitive",
+      "value": "User01, Test01"
+    },
+    {
+      "typeName": "dateOfDeposit",
+      "multiple": false,
+      "typeClass": "primitive",
+      "value": "2022-11-04"
+    }
+  ]
+}

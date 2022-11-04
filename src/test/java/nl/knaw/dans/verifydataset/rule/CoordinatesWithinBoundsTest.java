@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2022 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.knaw.dans.verifydataset.rule;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -17,7 +32,7 @@ import nl.knaw.dans.lib.dataverse.model.search.ResultItem;
 import nl.knaw.dans.verifydataset.DdVerifyDatasetConfiguration;
 import nl.knaw.dans.verifydataset.core.config.CoordinatesWithinBoundsConfig;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
-import nl.knaw.dans.verifydataset.core.rule.VerifyCoordinatesWithinBounds;
+import nl.knaw.dans.verifydataset.core.rule.CoordinatesWithinBounds;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -29,7 +44,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VerifyCoordinatesWithinBoundsTest {
+public class CoordinatesWithinBoundsTest {
 
     private ObjectMapper mdMapper;
     private final YamlConfigurationFactory<DdVerifyDatasetConfiguration> factory;
@@ -49,7 +64,7 @@ public class VerifyCoordinatesWithinBoundsTest {
     @Test
     public void something() throws ConfigurationException, IOException {
         MetadataBlock mb = mdMapper.readValue(new File("src/test/resources/spatial-mb.json"), MetadataBlock.class);
-        List<String> actual = new VerifyCoordinatesWithinBounds(loadDistConfig())
+        List<String> actual = new CoordinatesWithinBounds(loadDistConfig())
             .verify(Collections.singletonMap("dansTemporalSpatial", mb));
         assertEquals(List.of(
             "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",

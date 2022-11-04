@@ -15,11 +15,23 @@
  */
 package nl.knaw.dans.verifydataset.core.rule;
 
-import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
+import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
+import nl.knaw.dans.verifydataset.core.config.ResolversConfig;
+import org.apache.commons.lang3.NotImplementedException;
 
-import java.util.List;
 import java.util.Map;
 
-public interface VerifyDatasetMetadata {
-    public List<String> verify(Map<String, MetadataBlock> mdBlocks);
+public class IdentifiersCanBeResolved extends MetadataRule {
+    private ResolversConfig config;
+
+    public IdentifiersCanBeResolved(ResolversConfig config) {
+        blockName = "citation";
+        fieldName = "author";
+        this.config = config;
+    }
+
+    @Override
+    public String verifySingleField(Map<String, SingleValueField> attributes) {
+        throw new NotImplementedException();
+    }
 }

@@ -27,8 +27,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DdVerifyDatasetConfigurationTest {
@@ -44,6 +46,10 @@ public class DdVerifyDatasetConfigurationTest {
     public void canReadDist() throws IOException, ConfigurationException {
         var config = factory.build(FileInputStream::new, "src/main/assembly/dist/cfg/config.yml");
         assertEquals(629000, Objects.requireNonNull(config.getVerifyDataset().getCoordinatesWithinBounds().get("RD")).getMaxY());
+        assertArrayEquals(
+            List.of("https://orcid.org/{id}", "https://www.isni.org/isni/{id}").toArray(),
+            config.getVerifyDataset().getIdentifiersCanBeResolved().values().toArray()
+        );
     }
 
     @Test
