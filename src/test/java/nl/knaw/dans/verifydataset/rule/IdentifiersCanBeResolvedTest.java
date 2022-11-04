@@ -17,8 +17,7 @@ package nl.knaw.dans.verifydataset.rule;
 
 import io.dropwizard.configuration.ConfigurationException;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
-import nl.knaw.dans.verifydataset.core.config.CoordinatesWithinBoundsConfig;
-import nl.knaw.dans.verifydataset.core.rule.CoordinatesWithinBounds;
+import nl.knaw.dans.verifydataset.core.rule.IdentifiersCanBeResolved;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -31,17 +30,17 @@ import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.loadDistConfig
 import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.mdMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CoordinatesWithinBoundsTest {
+public class IdentifiersCanBeResolvedTest {
 
     @Test
     public void something() throws ConfigurationException, IOException {
-        Map<String, CoordinatesWithinBoundsConfig> config = loadDistConfig().getCoordinatesWithinBounds();
-        MetadataBlock mb = mdMapper.readValue(new File("src/test/resources/spatial-mb.json"), MetadataBlock.class);
-        List<String> actual = new CoordinatesWithinBounds(config)
-            .verify(Collections.singletonMap("dansTemporalSpatial", mb));
+        Map<String, String> config = loadDistConfig().getIdentifiersCanBeResolved();
+        MetadataBlock mb = mdMapper.readValue(new File("src/test/resources/citation-mb.json"), MetadataBlock.class);
+        List<String> actual = new IdentifiersCanBeResolved(config)
+            .verify(Collections.singletonMap("citation", mb));
         assertEquals(List.of(
-            "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
-            "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}"
+            "Not yet implemented: resolving https://orcid.org/0000-0003-2125-060X",
+            "Not yet implemented: resolving https://www.isni.org/isni/000000012281955X"
         ), actual);
     }
 }

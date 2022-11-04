@@ -16,22 +16,28 @@
 package nl.knaw.dans.verifydataset.core.rule;
 
 import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
-import nl.knaw.dans.verifydataset.core.config.ResolversConfig;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Map;
 
 public class IdentifiersCanBeResolved extends MetadataRule {
-    private ResolversConfig config;
+    private final Map<String, String> schemeToUrlFormat;
 
-    public IdentifiersCanBeResolved(ResolversConfig config) {
+    public IdentifiersCanBeResolved(Map<String, String> config) {
         blockName = "citation";
         fieldName = "author";
-        this.config = config;
+        this.schemeToUrlFormat = config;
     }
 
     @Override
     public String verifySingleField(Map<String, SingleValueField> attributes) {
-        throw new NotImplementedException();
+        String scheme = attributes.getOrDefault("authorIdentifierScheme", defaultValue).getValue();
+        if (!schemeToUrlFormat.containsKey(scheme))
+            return "";
+        else {
+            String identifier = attributes.getOrDefault("authorIdentifier", defaultValue).getValue();
+            String url = schemeToUrlFormat.get(scheme).replace("{id}", identifier);
+            // note that isni redirects
+            return ("Not yet implemented: resolving " + url);
+        }
     }
 }
