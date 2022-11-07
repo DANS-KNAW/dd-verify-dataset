@@ -28,6 +28,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import static nl.knaw.dans.lib.util.CheckDigit.validateMod11Two;
+
 public class IdentifiersCanBeResolved extends MetadataRule {
     private static final Logger log = LoggerFactory.getLogger(IdentifiersCanBeResolved.class);
     private static final HttpClient client = HttpClients.createDefault();
@@ -43,19 +45,22 @@ public class IdentifiersCanBeResolved extends MetadataRule {
     @Override
     public String verifySingleField(Map<String, SingleValueField> attributes) {
         String scheme = attributes.getOrDefault("authorIdentifierScheme", defaultValue).getValue();
-        if (!schemeToUrlFormat.containsKey(scheme))
+        String identifier = attributes.getOrDefault("authorIdentifier", defaultValue).getValue();
+        if (!schemeToUrlFormat.containsKey(scheme) || identifier == null)
             return "";
         else {
-            String identifier = attributes.getOrDefault("authorIdentifier", defaultValue).getValue();
+            if (!validateMod11Two(identifier.replaceAll("-","")))
+                return String.format("%s is not a valid %s", identifier, scheme);
             String url = schemeToUrlFormat.get(scheme).replace("{id}", identifier);
             log.debug("resolving " + url);
             try {
                 HttpGet request = new HttpGet(new URI(url));
-                request.setHeader("Accept", "application/xml"); // to get 404 by ORCID, ignored by ISNI
+                request.setHeader("Accept", "application/xml"); // to get 404 by ORCID, default/ignored by ISNI
                 HttpResponse resp = client.execute(request);
                 int statusCode = resp.getStatusLine().getStatusCode();
                 log.debug(statusCode + " returned for " + url);
                 if (statusCode == 200)
+                    // look for <srw:numberOfRecords> not found: orcid==ok, not 1: none or multiple ISNI's found
                     return "";
                 else if (statusCode == 404)
                     return "Not found " + url;
