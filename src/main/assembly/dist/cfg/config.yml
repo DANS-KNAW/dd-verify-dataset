@@ -19,7 +19,7 @@ dataverse:
   awaitLockStateMillisecondsBetweenRetries: 500
 
 verifyDataset:
-  iedentifierHasValidMod11:
+  identifierHasValidMod11:
     - "ORCID"
     - "ISNI"
     - "VIAF"

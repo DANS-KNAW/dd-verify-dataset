@@ -17,7 +17,7 @@ package nl.knaw.dans.verifydataset.rule;
 
 import io.dropwizard.configuration.ConfigurationException;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
-import nl.knaw.dans.verifydataset.core.rule.iedentifierHasValidMod11;
+import nl.knaw.dans.verifydataset.core.rule.IdentifierHasValidMod11;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -29,13 +29,13 @@ import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.loadDistConfig
 import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.mdMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IdentifiersCanBeResolvedTest {
+public class IdentifierHasValidMod11Test {
 
     @Test
     public void something() throws ConfigurationException, IOException {
-        String[] config = loadDistConfig().getiedentifierHasValidMod11();
+        String[] config = loadDistConfig().getIdentifierHasValidMod11();
         MetadataBlock mb = mdMapper.readValue(new File("src/test/resources/citation-mb.json"), MetadataBlock.class);
-        List<String> actual = new iedentifierHasValidMod11(config)
+        List<String> actual = new IdentifierHasValidMod11(config)
             .verify(Collections.singletonMap("citation", mb));
         assertEquals(List.of(), actual);
     }

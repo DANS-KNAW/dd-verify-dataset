@@ -28,25 +28,22 @@ import java.util.stream.Collectors;
 
 import static nl.knaw.dans.lib.util.CheckDigit.validateMod11Two;
 
-public class iedentifierHasValidMod11 extends MetadataRule {
-    private static final Logger log = LoggerFactory.getLogger(iedentifierHasValidMod11.class);
-    private static final HttpClient client = HttpClients.createDefault();
+public class IdentifierHasValidMod11 extends MetadataRule {
+    private List<String> schemes;
 
-    private final String[] schemes;
-
-    public iedentifierHasValidMod11(String[] config) {
+    public IdentifierHasValidMod11(String[] config) {
         blockName = "citation";
         fieldName = "author";
-        this.schemes = config;
+        this.schemes = Arrays.stream(config).collect(Collectors.toList());
     }
 
     @Override
     public String verifySingleField(Map<String, SingleValueField> attributes) {
         String scheme = attributes.getOrDefault("authorIdentifierScheme", defaultValue).getValue();
         String identifier = attributes.getOrDefault("authorIdentifier", defaultValue).getValue();
-        if (!Arrays.stream(schemes).collect(Collectors.toList()).contains(scheme) || identifier == null)
+        if (!schemes.contains(scheme))
             return "";
-        else if (!validateMod11Two(identifier.replaceAll("-", "")))
+        else if (identifier == null || !validateMod11Two(identifier.replaceAll("-", "")))
             return String.format("%s is not a valid %s", identifier, scheme);
         else
             return "";

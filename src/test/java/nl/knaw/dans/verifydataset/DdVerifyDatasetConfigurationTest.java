@@ -48,7 +48,7 @@ public class DdVerifyDatasetConfigurationTest {
         assertEquals(629000, Objects.requireNonNull(config.getVerifyDataset().getCoordinatesWithinBounds().get("RD")).getMaxY());
         assertArrayEquals(
             List.of("ORCID", "ISNI", "VIAF").toArray(),
-            config.getVerifyDataset().getiedentifierHasValidMod11()
+            config.getVerifyDataset().getIdentifierHasValidMod11()
         );
     }
 

@@ -3,12 +3,10 @@ server:
   adminContextPath: /
   applicationConnectors:
     - type: http
-      # Replace with port number unique for this service
-      port: 20000
+      port: 20345
   adminConnectors:
     - type: http
-      # Replace with port number unique for this service
-      port: 20001
+      port: 20346
 
 dataverse:
   baseUrl: 'http://dar.dans.knaw.nl:8080'
@@ -18,10 +16,23 @@ dataverse:
   awaitLockStateMillisecondsBetweenRetries: 500
 
 verifyDataset:
-  iedentifierHasValidMod11:
+  identifierHasValidMod11:
     - "ORCID"
     - "ISNI"
     - "VIAF"
+  coordinatesWithinBounds:
+    RD:
+      minX: -7000
+      maxX: 300000
+      minY: 289000
+      maxY: 629000
+    latlon:
+      minX: -180
+      maxX: 180
+      minY: -90
+      maxY: 90
+#  authorNameFormatOk:
+#    - regexp: ?
 
 #
 # See https://www.dropwizard.io/en/latest/manual/configuration.html#logging
