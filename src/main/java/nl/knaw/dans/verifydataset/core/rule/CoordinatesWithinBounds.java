@@ -15,7 +15,6 @@
  */
 package nl.knaw.dans.verifydataset.core.rule;
 
-import nl.knaw.dans.lib.dataverse.model.dataset.PrimitiveSingleValueField;
 import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
 import nl.knaw.dans.verifydataset.core.config.CoordinatesWithinBoundsConfig;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -42,9 +41,9 @@ public class CoordinatesWithinBounds extends MetadataRule {
 
     @Override
     public String verifySingleField(Map<String, SingleValueField> attributes) {
-        String scheme = attributes.getOrDefault("dansSpatialPointScheme", defaultValue).getValue();
-        String xs = attributes.getOrDefault("dansSpatialPointX", defaultValue).getValue();
-        String ys = attributes.getOrDefault("dansSpatialPointY", defaultValue).getValue();
+        String scheme = attributes.getOrDefault("dansSpatialPointScheme", defaultAttribute).getValue();
+        String xs = attributes.getOrDefault("dansSpatialPointX", defaultAttribute).getValue();
+        String ys = attributes.getOrDefault("dansSpatialPointY", defaultAttribute).getValue();
         var bounds = config.get(scheme);
         if (!NumberUtils.isParsable(xs) || !NumberUtils.isParsable(ys) || bounds == null)
             return format("dansSpatialPoint(x=%s, y=%s, scheme=%s) has an invalid number and/or the scheme is not one of %s", xs, ys, scheme, config.keySet());

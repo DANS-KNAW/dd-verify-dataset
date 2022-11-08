@@ -20,8 +20,6 @@ import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.lib.dataverse.model.dataset.PrimitiveSingleValueField;
 import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
 
-import java.net.URISyntaxException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,25 +28,18 @@ public abstract class MetadataRule {
     String blockName;
     String fieldName;
 
-    protected static final PrimitiveSingleValueField defaultValue = new PrimitiveSingleValueField();
+    protected static final PrimitiveSingleValueField defaultAttribute = new PrimitiveSingleValueField();
+
+    protected abstract String verifySingleField(Map<String, SingleValueField> attributes);
 
     public final List<String> verify(Map<String, MetadataBlock> mdBlocks) {
-        List<String> messages = new LinkedList<>();
-        var mdBlock = mdBlocks.get(blockName);
-        mdBlock.getFields().stream()
+        return mdBlocks.get(blockName)
+            .getFields().stream()
             .filter(f -> f.getTypeName().equals(fieldName))
             .filter(f -> f instanceof CompoundField)
-            .map(f -> ((CompoundField) f).getValue())
-            .forEach(p -> messages.addAll(verifyFields(p)));
-        return messages;
-    }
-
-    private List<String> verifyFields(List<Map<String, SingleValueField>> points) {
-        return points.stream()
+            .flatMap(f -> (((CompoundField) f).getValue()).stream())
             .map(this::verifySingleField)
             .filter(s -> !s.isEmpty())
             .collect(Collectors.toList());
     }
-
-    protected abstract String verifySingleField(Map<String, SingleValueField> attributes);
 }

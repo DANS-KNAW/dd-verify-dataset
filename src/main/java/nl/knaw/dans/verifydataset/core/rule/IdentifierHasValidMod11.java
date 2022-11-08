@@ -16,10 +16,6 @@
 package nl.knaw.dans.verifydataset.core.rule;
 
 import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +25,7 @@ import java.util.stream.Collectors;
 import static nl.knaw.dans.lib.util.CheckDigit.validateMod11Two;
 
 public class IdentifierHasValidMod11 extends MetadataRule {
-    private List<String> schemes;
+    private final List<String> schemes;
 
     public IdentifierHasValidMod11(String[] config) {
         blockName = "citation";
@@ -39,8 +35,8 @@ public class IdentifierHasValidMod11 extends MetadataRule {
 
     @Override
     public String verifySingleField(Map<String, SingleValueField> attributes) {
-        String scheme = attributes.getOrDefault("authorIdentifierScheme", defaultValue).getValue();
-        String identifier = attributes.getOrDefault("authorIdentifier", defaultValue).getValue();
+        String scheme = attributes.getOrDefault("authorIdentifierScheme", defaultAttribute).getValue();
+        String identifier = attributes.getOrDefault("authorIdentifier", defaultAttribute).getValue();
         if (!schemes.contains(scheme))
             return "";
         else if (identifier == null || !validateMod11Two(identifier.replaceAll("-", "")))

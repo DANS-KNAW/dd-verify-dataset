@@ -16,7 +16,6 @@
 package nl.knaw.dans.verifydataset.core.service;
 
 import nl.knaw.dans.lib.dataverse.DataverseClient;
-import nl.knaw.dans.lib.dataverse.DataverseClientConfig;
 import nl.knaw.dans.lib.dataverse.DataverseException;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.lib.dataverse.model.dataverse.Dataverse;
@@ -25,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 
 public class DataverseApiServiceImpl implements nl.knaw.dans.verifydataset.core.service.DataverseApiService {
