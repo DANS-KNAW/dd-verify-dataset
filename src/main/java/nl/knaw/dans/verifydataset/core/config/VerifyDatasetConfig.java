@@ -15,20 +15,21 @@
  */
 package nl.knaw.dans.verifydataset.core.config;
 
+import java.util.List;
 import java.util.Map;
 
 public class VerifyDatasetConfig {
 
-    private Map<String, String> identifiersCanBeResolved;
+    private String[] iedentifierHasValidMod11;
 
     private Map<String, CoordinatesWithinBoundsConfig> coordinatesWithinBounds;
 
-    public Map<String, String> getIdentifiersCanBeResolved() {
-        return identifiersCanBeResolved;
+    public String[] getiedentifierHasValidMod11() {
+        return iedentifierHasValidMod11;
     }
 
-    public void setIdentifiersCanBeResolved(Map<String, String> identifiersCanBeResolved) {
-        this.identifiersCanBeResolved = identifiersCanBeResolved;
+    public void setiedentifierHasValidMod11(String[] iedentifierHasValidMod11) {
+        this.iedentifierHasValidMod11 = iedentifierHasValidMod11;
     }
 
     public Map<String, CoordinatesWithinBoundsConfig> getCoordinatesWithinBounds() {

@@ -19,9 +19,10 @@ dataverse:
   awaitLockStateMillisecondsBetweenRetries: 500
 
 verifyDataset:
-  identifiersCanBeResolved:
-    ORCID: 'https://orcid.org/{id}'
-    ISNI: 'https://isni.oclc.org/xslt/DB=1.2/CLK?IKT=6102&TRM={id}'
+  iedentifierHasValidMod11:
+    - "ORCID"
+    - "ISNI"
+    - "VIAF"
   coordinatesWithinBounds:
     RD:
       minX: -7000

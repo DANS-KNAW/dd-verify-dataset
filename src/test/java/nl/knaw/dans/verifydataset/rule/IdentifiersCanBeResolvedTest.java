@@ -17,14 +17,13 @@ package nl.knaw.dans.verifydataset.rule;
 
 import io.dropwizard.configuration.ConfigurationException;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
-import nl.knaw.dans.verifydataset.core.rule.IdentifiersCanBeResolved;
+import nl.knaw.dans.verifydataset.core.rule.iedentifierHasValidMod11;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.loadDistConfig;
 import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.mdMapper;
@@ -34,10 +33,10 @@ public class IdentifiersCanBeResolvedTest {
 
     @Test
     public void something() throws ConfigurationException, IOException {
-        Map<String, String> config = loadDistConfig().getIdentifiersCanBeResolved();
+        String[] config = loadDistConfig().getiedentifierHasValidMod11();
         MetadataBlock mb = mdMapper.readValue(new File("src/test/resources/citation-mb.json"), MetadataBlock.class);
-        List<String> actual = new IdentifiersCanBeResolved(config)
+        List<String> actual = new iedentifierHasValidMod11(config)
             .verify(Collections.singletonMap("citation", mb));
-        assertEquals(List.of("Not found https://orcid.org/0000-0001-2281-955X"), actual);
+        assertEquals(List.of(), actual);
     }
 }

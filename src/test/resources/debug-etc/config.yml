@@ -18,9 +18,10 @@ dataverse:
   awaitLockStateMillisecondsBetweenRetries: 500
 
 verifyDataset:
-  identifiersCanBeResolved:
-    orcid: 'https://orcid.org/{id}'
-    isni: 'https://www.isni.org/isni/{id}'
+  iedentifierHasValidMod11:
+    - "ORCID"
+    - "ISNI"
+    - "VIAF"
 
 #
 # See https://www.dropwizard.io/en/latest/manual/configuration.html#logging
