@@ -21,14 +21,14 @@ import nl.knaw.dans.verifydataset.core.config.CoordinatesWithinBoundsConfig;
 import nl.knaw.dans.verifydataset.core.rule.CoordinatesWithinBounds;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.loadDistConfig;
-import static nl.knaw.dans.verifydataset.rule.MetadataRuleSupport.mdMapper;
+import static nl.knaw.dans.verifydataset.DataSupport.loadDistConfig;
+import static nl.knaw.dans.verifydataset.DataSupport.readMdb;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoordinatesWithinBoundsTest {
@@ -36,9 +36,10 @@ public class CoordinatesWithinBoundsTest {
     @Test
     public void something() throws ConfigurationException, IOException {
         Map<String, CoordinatesWithinBoundsConfig> config = loadDistConfig().getCoordinatesWithinBounds();
-        MetadataBlock mb = mdMapper.readValue(new File("src/test/resources/spatial-mb.json"), MetadataBlock.class);
+        MetadataBlock mb = readMdb("spatial-mb.json");
         List<String> actual = new CoordinatesWithinBounds(config)
-            .verify(Collections.singletonMap("dansTemporalSpatial", mb));
+            .verify(Collections.singletonMap("dansTemporalSpatial", mb))
+            .collect(Collectors.toList());
         assertEquals(List.of(
             "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
             "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}"

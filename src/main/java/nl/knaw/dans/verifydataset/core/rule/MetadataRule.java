@@ -19,10 +19,12 @@ import nl.knaw.dans.lib.dataverse.model.dataset.CompoundField;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.lib.dataverse.model.dataset.PrimitiveSingleValueField;
 import nl.knaw.dans.lib.dataverse.model.dataset.SingleValueField;
+import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class MetadataRule {
     String blockName;
@@ -32,14 +34,20 @@ public abstract class MetadataRule {
 
     protected abstract String verifySingleField(Map<String, SingleValueField> attributes);
 
-    public final List<String> verify(Map<String, MetadataBlock> mdBlocks) {
+    public final Stream<String> verify(Map<String, MetadataBlock> mdBlocks) {
         return mdBlocks.get(blockName)
             .getFields().stream()
             .filter(f -> f.getTypeName().equals(fieldName))
             .filter(f -> f instanceof CompoundField)
             .flatMap(f -> (((CompoundField) f).getValue()).stream())
             .map(this::verifySingleField)
-            .filter(s -> !s.isEmpty())
-            .collect(Collectors.toList());
+            .filter(s -> !s.isEmpty());
+    }
+
+    public static List<MetadataRule> configureRules(VerifyDatasetConfig config) {
+        LinkedList<MetadataRule> rules = new LinkedList<>();
+        rules.add(new CoordinatesWithinBounds(config.getCoordinatesWithinBounds()));
+        rules.add(new IdentifierHasValidMod11(config.getIdentifierHasValidMod11()));
+        return rules;
     }
 }

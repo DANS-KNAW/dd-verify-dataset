@@ -16,11 +16,14 @@
 
 package nl.knaw.dans.verifydataset;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.knaw.dans.lib.dataverse.DataverseClient;
+import nl.knaw.dans.verifydataset.health.DataverseHealthCheck;
+import nl.knaw.dans.verifydataset.resource.VerifyResource;
 
 public class DdVerifyDatasetApplication extends Application<DdVerifyDatasetConfiguration> {
 
@@ -44,6 +47,8 @@ public class DdVerifyDatasetApplication extends Application<DdVerifyDatasetConfi
             .build(getName());
         DataverseClient dataverseClient = configuration.getDataverse().build();
 
+        environment.healthChecks().register("Dataverse", new DataverseHealthCheck(dataverseClient));
+        // TODO tell how to deserialize VerifyRequest?
+        environment.jersey().register(new VerifyResource(dataverseClient, configuration.getVerifyDataset()));
     }
-
 }

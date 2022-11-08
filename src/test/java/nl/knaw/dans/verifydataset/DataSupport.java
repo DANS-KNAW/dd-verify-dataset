@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.knaw.dans.verifydataset.rule;
+package nl.knaw.dans.verifydataset;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,18 +25,22 @@ import io.dropwizard.jersey.validation.Validators;
 import nl.knaw.dans.lib.dataverse.DataverseItemDeserializer;
 import nl.knaw.dans.lib.dataverse.MetadataFieldDeserializer;
 import nl.knaw.dans.lib.dataverse.ResultItemDeserializer;
+import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataField;
 import nl.knaw.dans.lib.dataverse.model.dataverse.DataverseItem;
 import nl.knaw.dans.lib.dataverse.model.search.ResultItem;
 import nl.knaw.dans.verifydataset.DdVerifyDatasetConfiguration;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class MetadataRuleSupport {
+import static org.junit.jupiter.api.Assertions.fail;
 
-    public static final ObjectMapper mdMapper = createObjectMapper();
+public class DataSupport {
+
+    private static final ObjectMapper mdMapper = createObjectMapper();
     private static final YamlConfigurationFactory<DdVerifyDatasetConfiguration> factory = createFactory();
 
     private static ObjectMapper createObjectMapper() {
@@ -54,9 +58,23 @@ public class MetadataRuleSupport {
         return new YamlConfigurationFactory<>(DdVerifyDatasetConfiguration.class, Validators.newValidator(), mapper, "dw");
     }
 
-    public static VerifyDatasetConfig loadDistConfig() throws IOException, ConfigurationException {
-        DdVerifyDatasetConfiguration appCfg = factory
-            .build(FileInputStream::new, "src/main/assembly/dist/cfg/config.yml");
-        return appCfg.getVerifyDataset();
+    public static MetadataBlock readMdb(String testResource) {
+        try {
+            return mdMapper.readValue(new File("src/test/resources/" + testResource), MetadataBlock.class);
+        }
+        catch (IOException e) {
+            return fail(e);
+        }
+    }
+
+    public static VerifyDatasetConfig loadDistConfig() {
+        try {
+            return factory
+                .build(FileInputStream::new, "src/main/assembly/dist/cfg/config.yml")
+            .getVerifyDataset();
+        }
+        catch (IOException | ConfigurationException e) {
+            return fail(e);
+        }
     }
 }
