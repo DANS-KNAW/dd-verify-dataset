@@ -18,8 +18,11 @@ package nl.knaw.dans.verifydataset.api;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class MessageList extends LinkedList<String> {
-    public MessageList(Collection<? extends String> c) {
+public class VerifyResponse extends LinkedList<String> {
+    public VerifyResponse() {
+    }
+
+    public VerifyResponse(Collection<? extends String> c) {
         super(c);
     }
 }

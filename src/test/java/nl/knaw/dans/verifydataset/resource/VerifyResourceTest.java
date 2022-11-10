@@ -16,7 +16,6 @@
 package nl.knaw.dans.verifydataset.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.dans.lib.dataverse.DatasetApi;
@@ -24,7 +23,7 @@ import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseResponse;
 import nl.knaw.dans.lib.dataverse.model.dataset.DatasetVersion;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
-import nl.knaw.dans.verifydataset.api.MessageList;
+import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,6 @@ import org.mockito.Mockito;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,35 +54,23 @@ public class VerifyResourceTest {
     }
 
     @Test
-    void VerifyMethod() throws ConfigurationException, IOException {
-        MetadataBlock citationBlock = readMdb("citation-mb.json");
-        MetadataBlock spatialBlock = readMdb("spatial-mb.json");
+    void VerifyRequest() {
+        var citationBlock = readMdb("citation-mb.json");
+        var spatialBlock = readMdb("spatial-mb.json");
         mockDataverse(citationBlock, spatialBlock);
 
         VerifyRequest req = new VerifyRequest();
         req.setDatasetPid("");
 
-        var actual = new VerifyResource(dataverse, loadDistConfig())
-            .verify(req);
+        var actual = EXT.target("/verify")
+            .request()
+            .post(Entity.entity(req, MediaType.APPLICATION_JSON_TYPE), Response.class);
         assertEquals(200, actual.getStatus());
         assertEquals(List.of(
             "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
             "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}",
             "author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
-        ), actual.getEntity());
-    }
-
-    @Test
-    void VerifyRequest() throws ConfigurationException, IOException {
-        var citationBlock = readMdb("citation-mb.json");
-        var spatialBlock = readMdb("spatial-mb.json");
-        mockDataverse(citationBlock, spatialBlock);
-        var json = Entity.entity("{ 'datasetPId': 'doi:...'}", MediaType.APPLICATION_JSON_TYPE);
-
-        var r = EXT.target("/verify")
-            .request()
-            .post(json, Response.class);
-        assertEquals(200, r.getStatus());
+        ), actual.readEntity(VerifyResponse.class));
     }
 
     private void mockDataverse(MetadataBlock citationBlock, MetadataBlock spatialBlock) {

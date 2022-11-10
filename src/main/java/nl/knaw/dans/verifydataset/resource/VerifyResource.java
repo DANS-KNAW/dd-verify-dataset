@@ -17,7 +17,7 @@ package nl.knaw.dans.verifydataset.resource;
 
 import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseException;
-import nl.knaw.dans.verifydataset.api.MessageList;
+import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 import nl.knaw.dans.verifydataset.core.rule.MetadataRule;
@@ -54,6 +54,7 @@ public class VerifyResource {
     @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
     public Response verify(VerifyRequest req) {
         try {
+            log.info("Verifying " + req);
             var blocks = dataverse
                 .dataset(req.getDatasetPid())
                 .getVersion().getData().getMetadataBlocks();
@@ -61,7 +62,7 @@ public class VerifyResource {
                 .flatMap(rule -> rule.verify(blocks))
                 .collect(Collectors.toList());
             // ok->accepted when we change to asynchronous
-            return Response.ok(new MessageList(messages)).build();
+            return Response.ok(new VerifyResponse(messages)).build();
         }
         catch (IOException e) {
             throw new InternalServerErrorException(e);

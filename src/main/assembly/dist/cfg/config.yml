@@ -42,6 +42,9 @@ verifyDataset:
 #
 logging:
   level: INFO
+  loggers:
+    "nl.knaw.dans.verifydataset":
+      level: INFO
   appenders:
     - type: file
       archive: false
