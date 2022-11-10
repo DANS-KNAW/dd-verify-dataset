@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2022 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.knaw.dans.verifydataset.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +24,7 @@ import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseResponse;
 import nl.knaw.dans.lib.dataverse.model.dataset.DatasetVersion;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
+import nl.knaw.dans.verifydataset.api.MessageList;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,10 +66,11 @@ public class VerifyResourceTest {
 
         var actual = new VerifyResource(dataverse, loadDistConfig())
             .verify(req);
+        assertEquals(200,actual.getStatus());
         assertEquals(List.of(
             "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
             "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}"
-        ), actual);
+        ), actual.readEntity(MessageList.class));
     }
 
     @Test
@@ -63,7 +80,7 @@ public class VerifyResourceTest {
         mockDataverse(citationBlock, spatialBlock);
         var json = Entity.entity("{ 'datasetPId': 'doi:...'}", MediaType.APPLICATION_JSON_TYPE);
 
-        var r = EXT.target("/")
+        var r = EXT.target("/verify")
             .request()
             .post(json, Response.class);
         assertEquals(200, r.getStatus());

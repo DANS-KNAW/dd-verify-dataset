@@ -15,21 +15,11 @@
  */
 package nl.knaw.dans.verifydataset.api;
 
-public class VerifyRequest {
-    String datasetPid;
+import java.util.Collection;
+import java.util.LinkedList;
 
-    public String getDatasetPid() {
-        return datasetPid;
-    }
-
-    public void setDatasetPid(String datasetPid) {
-        this.datasetPid = datasetPid;
-    }
-
-    @Override
-    public String toString() {
-        return "VerifyRequest{" +
-            "datasetPid='" + datasetPid + '\'' +
-            '}';
+public class MessageList extends LinkedList<String> {
+    public MessageList(Collection<? extends String> c) {
+        super(c);
     }
 }
