@@ -47,7 +47,6 @@ public class DdVerifyDatasetApplication extends Application<DdVerifyDatasetConfi
         DataverseClient dataverseClient = configuration.getDataverse().build();
 
         environment.healthChecks().register("Dataverse", new DataverseHealthCheck(dataverseClient));
-        // TODO tell how to deserialize VerifyRequest?
         environment.jersey().register(new VerifyResource(dataverseClient, configuration.getVerifyDataset()));
     }
 }

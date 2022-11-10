@@ -17,8 +17,8 @@ package nl.knaw.dans.verifydataset.resource;
 
 import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseException;
-import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
+import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 import nl.knaw.dans.verifydataset.core.rule.MetadataRule;
 import org.slf4j.Logger;
