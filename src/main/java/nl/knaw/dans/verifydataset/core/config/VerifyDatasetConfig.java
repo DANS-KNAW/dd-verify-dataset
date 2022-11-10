@@ -23,6 +23,8 @@ public class VerifyDatasetConfig {
 
     private Map<String, CoordinatesWithinBoundsConfig> coordinatesWithinBounds;
 
+    private AuthorNameFormatOkConfig authorNameFormatOk;
+
     public String[] getIdentifierHasValidMod11() {
         return identifierHasValidMod11;
     }
@@ -37,5 +39,13 @@ public class VerifyDatasetConfig {
 
     public void setCoordinatesWithinBounds(Map<String, CoordinatesWithinBoundsConfig> coordinatesWithinBounds) {
         this.coordinatesWithinBounds = coordinatesWithinBounds;
+    }
+
+    public AuthorNameFormatOkConfig getAuthorNameFormatOk() {
+        return authorNameFormatOk;
+    }
+
+    public void setAuthorNameFormatOk(AuthorNameFormatOkConfig authorNameFormatOk) {
+        this.authorNameFormatOk = authorNameFormatOk;
     }
 }

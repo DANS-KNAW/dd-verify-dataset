@@ -66,11 +66,12 @@ public class VerifyResourceTest {
 
         var actual = new VerifyResource(dataverse, loadDistConfig())
             .verify(req);
-        assertEquals(200,actual.getStatus());
+        assertEquals(200, actual.getStatus());
         assertEquals(List.of(
             "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
-            "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}"
-        ), actual.readEntity(MessageList.class));
+            "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}",
+            "author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
+        ), actual.getEntity());
     }
 
     @Test

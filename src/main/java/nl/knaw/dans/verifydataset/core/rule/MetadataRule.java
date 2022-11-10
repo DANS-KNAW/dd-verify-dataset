@@ -48,6 +48,7 @@ public abstract class MetadataRule {
         LinkedList<MetadataRule> rules = new LinkedList<>();
         rules.add(new CoordinatesWithinBounds(config.getCoordinatesWithinBounds()));
         rules.add(new IdentifierHasValidMod11(config.getIdentifierHasValidMod11()));
+        rules.add(new AuthorNameFormatOk(config.getAuthorNameFormatOk()));
         return rules;
     }
 }

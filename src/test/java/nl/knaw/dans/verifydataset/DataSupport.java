@@ -29,7 +29,6 @@ import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataField;
 import nl.knaw.dans.lib.dataverse.model.dataverse.DataverseItem;
 import nl.knaw.dans.lib.dataverse.model.search.ResultItem;
-import nl.knaw.dans.verifydataset.DdVerifyDatasetConfiguration;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 
 import java.io.File;
@@ -71,7 +70,7 @@ public class DataSupport {
         try {
             return factory
                 .build(FileInputStream::new, "src/main/assembly/dist/cfg/config.yml")
-            .getVerifyDataset();
+                .getVerifyDataset();
         }
         catch (IOException | ConfigurationException e) {
             return fail(e);

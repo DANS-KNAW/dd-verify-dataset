@@ -15,10 +15,12 @@
  */
 package nl.knaw.dans.verifydataset.rule;
 
+import io.dropwizard.configuration.ConfigurationException;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
-import nl.knaw.dans.verifydataset.core.rule.IdentifierHasValidMod11;
+import nl.knaw.dans.verifydataset.core.rule.AuthorNameFormatOk;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,15 +29,15 @@ import static nl.knaw.dans.verifydataset.DataSupport.loadDistConfig;
 import static nl.knaw.dans.verifydataset.DataSupport.readMdb;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IdentifierHasValidMod11Test {
+public class AuthorNameFormatOkTest {
 
     @Test
-    public void something() {
-        String[] config = loadDistConfig().getIdentifierHasValidMod11();
+    public void something() throws ConfigurationException, IOException {
+        var config = loadDistConfig().getAuthorNameFormatOk();
         MetadataBlock mb = readMdb("citation-mb.json");
-        List<String> actual = new IdentifierHasValidMod11(config)
+        List<String> actual = new AuthorNameFormatOk(config)
             .verify(Collections.singletonMap("citation", mb))
             .collect(Collectors.toList());
-        assertEquals(List.of(), actual);
+        assertEquals(List.of("author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"), actual);
     }
 }

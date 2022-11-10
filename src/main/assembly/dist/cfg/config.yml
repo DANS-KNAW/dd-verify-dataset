@@ -34,8 +34,8 @@ verifyDataset:
       maxX: 180
       minY: -90
       maxY: 90
-#  authorNameFormatOk:
-#    - regexp: ?
+  authorNameFormatOk:
+    regexp: "[A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
 
 #
 # See https://www.dropwizard.io/en/latest/manual/configuration.html#logging

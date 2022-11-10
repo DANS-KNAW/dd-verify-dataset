@@ -16,7 +16,6 @@
 
 package nl.knaw.dans.verifydataset;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
