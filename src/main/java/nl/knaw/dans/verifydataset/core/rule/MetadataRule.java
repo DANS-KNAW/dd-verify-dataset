@@ -24,6 +24,7 @@ import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public abstract class MetadataRule {
@@ -31,17 +32,21 @@ public abstract class MetadataRule {
     String fieldName;
 
     protected static final PrimitiveSingleValueField defaultAttribute = new PrimitiveSingleValueField();
+    private static final AtomicReference<LinkedList<String>> stringLinkedList = new AtomicReference<>(new LinkedList<>());
 
     protected abstract String verifySingleField(Map<String, SingleValueField> attributes);
 
     public final Stream<String> verify(Map<String, MetadataBlock> mdBlocks) {
-        return mdBlocks.get(blockName)
-            .getFields().stream()
-            .filter(f -> f.getTypeName().equals(fieldName))
-            .filter(f -> f instanceof CompoundField)
-            .flatMap(f -> (((CompoundField) f).getValue()).stream())
-            .map(this::verifySingleField)
-            .filter(s -> !s.isEmpty());
+        if (!mdBlocks.containsKey(blockName))
+            return stringLinkedList.get().stream();
+        else
+            return mdBlocks.get(blockName)
+                .getFields().stream()
+                .filter(f -> f.getTypeName().equals(fieldName))
+                .filter(f -> f instanceof CompoundField)
+                .flatMap(f -> (((CompoundField) f).getValue()).stream())
+                .map(this::verifySingleField)
+                .filter(s -> !s.isEmpty());
     }
 
     public static List<MetadataRule> configureRules(VerifyDatasetConfig config) {

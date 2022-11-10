@@ -54,7 +54,7 @@ public class VerifyResourceTest {
     }
 
     @Test
-    void VerifyRequest() {
+    void verifyRequest() {
         var citationBlock = readMdb("citation-mb.json");
         var spatialBlock = readMdb("spatial-mb.json");
         mockDataverse(citationBlock, spatialBlock);
@@ -73,10 +73,28 @@ public class VerifyResourceTest {
         ), actual.readEntity(VerifyResponse.class));
     }
 
+    @Test
+    void withoutSpatial() {
+        var citationBlock = readMdb("citation-mb.json");
+        mockDataverse(citationBlock, null);
+
+        VerifyRequest req = new VerifyRequest();
+        req.setDatasetPid("");
+
+        var actual = EXT.target("/verify")
+            .request()
+            .post(Entity.entity(req, MediaType.APPLICATION_JSON_TYPE), Response.class);
+        assertEquals(200, actual.getStatus());
+        assertEquals(List.of(
+            "author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
+        ), actual.readEntity(VerifyResponse.class));
+    }
+
     private void mockDataverse(MetadataBlock citationBlock, MetadataBlock spatialBlock) {
         HashMap<String, MetadataBlock> map = new HashMap<>();
         map.put("citation", citationBlock);
-        map.put("dansTemporalSpatial", spatialBlock);
+        if (spatialBlock != null)
+            map.put("dansTemporalSpatial", spatialBlock);
         var dv = new DatasetVersion();
         dv.setMetadataBlocks(map);
         var datasetApi = new DatasetApi(null, "", false) {

@@ -40,7 +40,7 @@ verifyDataset:
 logging:
   level: INFO
   loggers:
-    "nl.knaw.dans":
+    "nl.knaw.dans.verifyDataset":
       level: TRACE
   appenders:
     - type: console

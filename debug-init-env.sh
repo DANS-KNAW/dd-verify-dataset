@@ -17,5 +17,7 @@
 
 echo -n "Pre-creating log..."
 TEMPDIR=data
+mkdir $TEMPDIR etc
 touch $TEMPDIR/dd-verify-dataset.log
+cp -r src/test/resources/debug-etc/* etc
 echo "OK"
