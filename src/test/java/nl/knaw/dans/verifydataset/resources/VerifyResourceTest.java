@@ -60,7 +60,7 @@ public class VerifyResourceTest {
         mockDataverse(citationBlock, spatialBlock);
 
         VerifyRequest req = new VerifyRequest();
-        req.setDatasetPid("");
+        req.setDatasetPid("blabla");
 
         var actual = EXT.target("/verify")
             .request()
@@ -73,7 +73,8 @@ public class VerifyResourceTest {
             "author[2] (9999-0000-0001-2281-955X) is not a valid ORCID"
         ), actualErrors.get("identifierHasValidMod11"));
         assertEquals(List.of(
-            "author[1] ('Barbapappa') does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
+            "author[1] ('Barbapappa') does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?",
+            "author[2] ('Barbapappa') does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
         ), actualErrors.get("authorNameFormatOk"));
         assertEquals(List.of(
             "dansSpatialPoint[1] (x=0, y=0, scheme='RD (in m.)') does not conform to its scheme wich requires CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}",
@@ -87,7 +88,7 @@ public class VerifyResourceTest {
         mockDataverse(citationBlock, null);
 
         VerifyRequest req = new VerifyRequest();
-        req.setDatasetPid("");
+        req.setDatasetPid("blabla");
 
         var actual = EXT.target("/verify")
             .request()
