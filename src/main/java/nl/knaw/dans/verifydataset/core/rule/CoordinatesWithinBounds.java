@@ -47,7 +47,7 @@ public class CoordinatesWithinBounds extends MetadataRule {
         String msgStart = format("%s[%d] (x=%s, y=%s, scheme='%s')", fieldName, fieldNr, xs, ys, scheme);
         var bounds = config.get(scheme);
         if (!NumberUtils.isParsable(xs) || !NumberUtils.isParsable(ys) || bounds == null)
-            return format(msgStart + " has an invalid number and/or the scheme is not one of %s",config.keySet());
+            return format(msgStart + " has an invalid number and/or the scheme is not one of %s", config.keySet());
         else {
             var s = "coordinate in field '%s' does not conform to scheme 'RD': (%d,$d)";
             var x = NumberUtils.createNumber(xs).floatValue();

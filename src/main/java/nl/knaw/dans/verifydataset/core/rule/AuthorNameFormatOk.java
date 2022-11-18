@@ -20,8 +20,6 @@ import nl.knaw.dans.verifydataset.core.config.AuthorNameFormatOkConfig;
 
 import java.util.Map;
 
-import static java.lang.String.format;
-
 public class AuthorNameFormatOk extends MetadataRule {
     String regexp;
 

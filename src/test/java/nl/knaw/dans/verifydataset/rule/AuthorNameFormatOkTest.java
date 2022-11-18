@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static nl.knaw.dans.verifydataset.DataSupport.loadDistConfig;
 import static nl.knaw.dans.verifydataset.DataSupport.readMdb;
