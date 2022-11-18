@@ -34,13 +34,13 @@ public class IdentifierHasValidMod11 extends MetadataRule {
     }
 
     @Override
-    public String verifySingleField(Map<String, SingleValueField> attributes) {
+    public String verifySingleField(Map<String, SingleValueField> attributes, int fieldNr) {
         String scheme = attributes.getOrDefault("authorIdentifierScheme", defaultAttribute).getValue();
         String identifier = attributes.getOrDefault("authorIdentifier", defaultAttribute).getValue();
         if (!schemes.contains(scheme))
             return "";
         else if (identifier == null || !validateMod11Two(identifier.replaceAll("-", "")))
-            return String.format("%s is not a valid %s", identifier, scheme);
+            return String.format("%s[%d] (%s) is not a valid %s", fieldName, fieldNr, identifier, scheme);
         else
             return "";
     }

@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public abstract class MetadataRule {
@@ -35,20 +35,23 @@ public abstract class MetadataRule {
     protected static final PrimitiveSingleValueField defaultAttribute = new PrimitiveSingleValueField();
     private static final List<String> stringLinkedList = new LinkedList<>();
 
-    protected abstract String verifySingleField(Map<String, SingleValueField> attributes);
+    protected abstract String verifySingleField(Map<String, SingleValueField> attributes, int n);
 
     public final List<String> verify(Map<String, MetadataBlock> mdBlocks) {
+        int n = 0;
         if (!mdBlocks.containsKey(blockName))
             return stringLinkedList;
-        else
+        else {
+            AtomicInteger index = new AtomicInteger();
             return mdBlocks.get(blockName)
                 .getFields().stream()
                 .filter(f -> f.getTypeName().equals(fieldName))
                 .filter(f -> f instanceof CompoundField)
                 .flatMap(f -> (((CompoundField) f).getValue()).stream())
-                .map(this::verifySingleField)
+                .map(f -> verifySingleField(f, index.incrementAndGet()))
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+        }
     }
 
     public static Map<String, MetadataRule> configureRules(VerifyDatasetConfig config) {

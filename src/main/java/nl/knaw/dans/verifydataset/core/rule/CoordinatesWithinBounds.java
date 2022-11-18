@@ -40,18 +40,20 @@ public class CoordinatesWithinBounds extends MetadataRule {
     }
 
     @Override
-    public String verifySingleField(Map<String, SingleValueField> attributes) {
+    public String verifySingleField(Map<String, SingleValueField> attributes, int fieldNr) {
         String scheme = attributes.getOrDefault("dansSpatialPointScheme", defaultAttribute).getValue();
         String xs = attributes.getOrDefault("dansSpatialPointX", defaultAttribute).getValue();
         String ys = attributes.getOrDefault("dansSpatialPointY", defaultAttribute).getValue();
+        String msgStart = format("%s[%d] (x=%s, y=%s, scheme='%s')", fieldName, fieldNr, xs, ys, scheme);
         var bounds = config.get(scheme);
         if (!NumberUtils.isParsable(xs) || !NumberUtils.isParsable(ys) || bounds == null)
-            return format("dansSpatialPoint(x=%s, y=%s, scheme=%s) has an invalid number and/or the scheme is not one of %s", xs, ys, scheme, config.keySet());
+            return format(msgStart + " has an invalid number and/or the scheme is not one of %s",config.keySet());
         else {
+            var s = "coordinate in field '%s' does not conform to scheme 'RD': (%d,$d)";
             var x = NumberUtils.createNumber(xs).floatValue();
             var y = NumberUtils.createNumber(ys).floatValue();
             if (x < bounds.getMinX() || x > bounds.getMaxX() || y < bounds.getMinY() || y > bounds.getMaxY())
-                return format("dansSpatialPoint(x=%s y=%s, scheme=%s) does not comply to %s", xs, ys, scheme, bounds);
+                return format(msgStart + " does not conform to its scheme wich requires %s", bounds);
             else
                 return "";
         }

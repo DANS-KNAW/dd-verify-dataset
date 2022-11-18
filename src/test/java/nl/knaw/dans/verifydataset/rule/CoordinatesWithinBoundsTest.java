@@ -40,8 +40,8 @@ public class CoordinatesWithinBoundsTest {
         List<String> actual = new CoordinatesWithinBounds(config)
             .verify(Collections.singletonMap("dansTemporalSpatial", mb));
         assertEquals(List.of(
-            "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
-            "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}"
-        ), actual);
+            "dansSpatialPoint[1] (x=0, y=0, scheme='RD (in m.)') does not conform to its scheme wich requires CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}",
+            "dansSpatialPoint[3] (x=null, y=null, scheme='null') has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]"
+            ), actual);
     }
 }

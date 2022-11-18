@@ -37,6 +37,9 @@ public class AuthorNameFormatOkTest {
         MetadataBlock mb = readMdb("citation-mb.json");
         List<String> actual = new AuthorNameFormatOk(config)
             .verify(Collections.singletonMap("citation", mb));
-        assertEquals(List.of("author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"), actual);
+        assertEquals(List.of(
+            "author[1] ('Barbapappa') does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?",
+            "author[2] ('Barbapappa') does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
+        ), actual);
     }
 }

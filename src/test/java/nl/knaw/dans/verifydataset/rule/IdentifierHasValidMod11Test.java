@@ -35,6 +35,6 @@ public class IdentifierHasValidMod11Test {
         MetadataBlock mb = readMdb("citation-mb.json");
         List<String> actual = new IdentifierHasValidMod11(config)
             .verify(Collections.singletonMap("citation", mb));
-        assertEquals(List.of(), actual);
+        assertEquals(List.of("author[2] (9999-0000-0001-2281-955X) is not a valid ORCID"), actual);
     }
 }

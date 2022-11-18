@@ -25,11 +25,14 @@ The response is also formatted as JSON:
 {
    "errors": {
       "coordinatesWithinBounds": [
-         "coordinate in field 'someFiedIdX' does not conform to scheme 'RD': -3000",
-         "coordinate in field 'someFielIdY' does not conform to scheme 'latlon': invalid: abc"
+         "dansSpatialPoint[1] (x=0, y=0, scheme='RD (in m.)') does not conform to its scheme wich requires CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}",
+         "dansSpatialPoint[3] (x=a, y=b, scheme='c') has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]"
          ],
-      "identifiersCanBeResolved": [
-         "identifier of type ORCID in field someIdentifierField cannot be resolve: no-orcid"
+      "identifierHasValidMod11": [
+         "author[2] (9999-0000-0001-2281-955X) is not a valid ORCID"
+      ],
+      "authorNameFormatOk": [
+         "author[1] ('Barbapappa') does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
       ]
    }
 }

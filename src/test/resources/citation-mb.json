@@ -38,6 +38,26 @@
             "typeName": "authorName",
             "multiple": false,
             "typeClass": "primitive",
+            "value": "Barbapappa"
+          },
+          "authorIdentifierScheme": {
+            "typeName": "authorIdentifierScheme",
+            "multiple": false,
+            "typeClass": "controlledVocabulary",
+            "value": "ORCID"
+          },
+          "authorIdentifier": {
+            "typeName": "authorIdentifier",
+            "multiple": false,
+            "typeClass": "primitive",
+            "value": "9999-0000-0001-2281-955X"
+          }
+        },
+        {
+          "authorName": {
+            "typeName": "authorName",
+            "multiple": false,
+            "typeClass": "primitive",
             "value": "Einstein, A."
           },
           "authorIdentifierScheme": {
