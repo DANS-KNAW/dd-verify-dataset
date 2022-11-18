@@ -21,9 +21,11 @@ import nl.knaw.dans.verifydataset.api.VerifyRequest;
 import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 import nl.knaw.dans.verifydataset.core.rule.MetadataRule;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
@@ -54,6 +56,11 @@ public class VerifyResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
     public Response verify(VerifyRequest req) {
+        if (StringUtils.isBlank(req.getDatasetPid()))
+            return Response
+                .status(Response.Status.BAD_REQUEST)
+                .entity("Field 'datasetPid' is mandatory")
+                .build();
         try {
             log.info("Verifying " + req);
             var blocks = dataverse
