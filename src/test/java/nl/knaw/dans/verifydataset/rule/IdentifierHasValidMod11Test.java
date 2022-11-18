@@ -34,8 +34,7 @@ public class IdentifierHasValidMod11Test {
         String[] config = loadDistConfig().getIdentifierHasValidMod11();
         MetadataBlock mb = readMdb("citation-mb.json");
         List<String> actual = new IdentifierHasValidMod11(config)
-            .verify(Collections.singletonMap("citation", mb))
-            .collect(Collectors.toList());
+            .verify(Collections.singletonMap("citation", mb));
         assertEquals(List.of(), actual);
     }
 }

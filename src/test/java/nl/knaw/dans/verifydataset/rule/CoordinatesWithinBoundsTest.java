@@ -38,8 +38,7 @@ public class CoordinatesWithinBoundsTest {
         Map<String, CoordinatesWithinBoundsConfig> config = loadDistConfig().getCoordinatesWithinBounds();
         MetadataBlock mb = readMdb("spatial-mb.json");
         List<String> actual = new CoordinatesWithinBounds(config)
-            .verify(Collections.singletonMap("dansTemporalSpatial", mb))
-            .collect(Collectors.toList());
+            .verify(Collections.singletonMap("dansTemporalSpatial", mb));
         assertEquals(List.of(
             "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
             "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}"

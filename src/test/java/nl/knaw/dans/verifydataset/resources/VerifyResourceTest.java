@@ -66,11 +66,17 @@ public class VerifyResourceTest {
             .request()
             .post(Entity.entity(req, MediaType.APPLICATION_JSON_TYPE), Response.class);
         assertEquals(200, actual.getStatus());
+        // assertEquals("{}", actual.readEntity(String.class));
+        VerifyResponse verifyResponse = actual.readEntity(VerifyResponse.class);
+        var actualErrors = verifyResponse.getErrors();
+        assertEquals(0, actualErrors.get("identifierHasValidMod11").size());
+        assertEquals(List.of(
+            "author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
+        ), actualErrors.get("authorNameFormatOk"));
         assertEquals(List.of(
             "dansSpatialPoint(x=null, y=null, scheme=null) has an invalid number and/or the scheme is not one of [longitude/latitude (degrees), RD, latlon, RD (in m.)]",
-            "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}",
-            "author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
-        ), actual.readEntity(VerifyResponse.class));
+            "dansSpatialPoint(x=0 y=0, scheme=RD (in m.)) does not comply to CoordinatesWithinBoundsConfig{minX=-7000, maxX=300000, minY=289000, maxY=629000}"
+        ), actualErrors.get("coordinatesWithinBounds"));
     }
 
     @Test
@@ -85,9 +91,9 @@ public class VerifyResourceTest {
             .request()
             .post(Entity.entity(req, MediaType.APPLICATION_JSON_TYPE), Response.class);
         assertEquals(200, actual.getStatus());
-        assertEquals(List.of(
-            "author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?"
-        ), actual.readEntity(VerifyResponse.class));
+        assertEquals(
+            "{\"errors\":{\"coordinatesWithinBounds\":[],\"authorNameFormatOk\":[\"author name 'Barbapappa' does not match [A-Z][a-z]+, ([A-Z][.])+( [a-z]+)?\"],\"identifierHasValidMod11\":[]}}",
+            actual.readEntity(String.class));
     }
 
     private void mockDataverse(MetadataBlock citationBlock, MetadataBlock spatialBlock) {

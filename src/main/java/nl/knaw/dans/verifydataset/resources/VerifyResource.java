@@ -17,8 +17,8 @@ package nl.knaw.dans.verifydataset.resources;
 
 import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseException;
-import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
+import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 import nl.knaw.dans.verifydataset.core.rule.MetadataRule;
 import org.slf4j.Logger;
@@ -33,15 +33,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class VerifyResource {
     private static final Logger log = LoggerFactory.getLogger(VerifyResource.class);
     private final DataverseClient dataverse;
-    private final List<MetadataRule> rules;
+    private final Map<String, MetadataRule> rules;
 
     public VerifyResource(DataverseClient dataverse, VerifyDatasetConfig config) {
         this.dataverse = dataverse;
@@ -58,9 +59,8 @@ public class VerifyResource {
             var blocks = dataverse
                 .dataset(req.getDatasetPid())
                 .getVersion().getData().getMetadataBlocks();
-            var messages = rules.stream()
-                .flatMap(rule -> rule.verify(blocks))
-                .collect(Collectors.toList());
+            HashMap<String, List<String>> messages = new HashMap<>();
+            rules.forEach((name, rule) -> messages.put(name, rule.verify(blocks)));
             // ok->accepted when we change to asynchronous
             return Response.ok(new VerifyResponse(messages)).build();
         }
