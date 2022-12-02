@@ -15,24 +15,24 @@
  */
 package nl.knaw.dans.verifydataset.api;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VerifyResponse {
-    private HashMap<String, List<String>> errors;
+    private Map<String, List<String>> errors;
 
     public VerifyResponse() {
     }
 
-    public VerifyResponse(HashMap<String, List<String>> errors) {
+    public VerifyResponse(Map<String, List<String>> errors) {
         this.errors = errors;
     }
 
-    public void setErrors(HashMap<String, List<String>> errors) {
+    public void setErrors(Map<String, List<String>> errors) {
         this.errors = errors;
     }
 
-    public HashMap<String, List<String>> getErrors() {
+    public Map<String, List<String>> getErrors() {
         return errors;
     }
 }
