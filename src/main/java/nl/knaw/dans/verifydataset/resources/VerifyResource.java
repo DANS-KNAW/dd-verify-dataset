@@ -63,13 +63,13 @@ public class VerifyResource {
         try {
             log.info("Looking for CMDI file(s) " + req);
             var files = cmdiChecker.find(req.getDatasetPid());
-            return Response.ok(new VerifyResponse(Map.of("is CMDI file", files))).build();
-        }
-        catch (IOException e) {
-            throw new InternalServerErrorException(e);
+            return Response.ok(files).build();
         }
         catch (DataverseException e) {
             return responseFromDataverseException(e);
+        }
+        catch (Exception e) {
+            throw new InternalServerErrorException(e);
         }
     }
 
