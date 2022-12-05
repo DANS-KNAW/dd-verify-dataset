@@ -20,15 +20,19 @@ import nl.knaw.dans.lib.dataverse.DataverseException;
 import nl.knaw.dans.lib.dataverse.model.file.FileMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CmdiChecker {
     private static final Logger log = LoggerFactory.getLogger(CmdiChecker.class);
-    private static final String cmdiSchema = "http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.1/profiles/clarin.eu:cr1:p_1493735943953/xsd";
+    private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private final DataverseClient dataverse;
 
     public CmdiChecker(DataverseClient dataverse) {
@@ -45,39 +49,36 @@ public class CmdiChecker {
     }
 
     private String fileName(FileMeta f) {
-        return f.getDirectoryLabel() + "/" + f.getLabel();
+        return (f.getDirectoryLabel() == null ? "" : f.getDirectoryLabel() + "/") + f.getLabel();
     }
 
     private boolean isCMDI(FileMeta f) {
         String contentType = f.getDataFile().getContentType();
         int fileId = f.getDataFile().getId();
         String name = fileName(f);
-        log.debug(String.format("checking %d %s", fileId, name));
-        if (!f.getLabel().toLowerCase().endsWith(".xml")) {
-            return false;
-        }
-        if (!contentType.toLowerCase().endsWith("xml")) {
-            log.error(String.format("not expected content type [%s] for %s", contentType, name));
-            return false;
-        }
-        try {
-            log.debug(String.format("requesting %d %s", fileId, name));
-            var response = dataverse
-                .basicFileAccess(fileId)
-                .getFile();
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != Response.Status.OK.getStatusCode()) {
-                log.error(String.format("could not read %d %s, status code:", fileId, name), statusCode);
-                return false;
+        String extension = f.getLabel().toLowerCase().replaceAll(".*[.]", "");
+        var extensions = List.of("xml", "cmdi");
+        if (extensions.contains(extension) || contentType.toLowerCase().endsWith("xml")) {
+            try {
+                log.debug(String.format("requesting %d %s", fileId, name));
+                var response = dataverse
+                    .basicFileAccess(fileId)
+                    .getFile();
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode != Response.Status.OK.getStatusCode()) {
+                    log.error(String.format("could not read %d %s, status code:", fileId, name), statusCode);
+                    return false;
+                }
+                log.debug(String.format("reading %d %s", fileId, name));
+                try (var is = response.getEntity().getContent()) {
+                    Node xmlns = documentBuilderFactory.newDocumentBuilder().parse(is)
+                        .getDocumentElement().getAttributes().getNamedItem("xmlns");
+                    return xmlns != null && xmlns.getNodeValue().toLowerCase().endsWith("//www.clarin.eu/cmd/");
+                }
             }
-            log.debug(String.format("reading %d %s", fileId, name));
-            try (var is = response.getEntity().getContent()) {
-                // TODO validate with schema
-                return new String(is.readAllBytes()).toLowerCase().contains("cmdi");
+            catch (DataverseException | IOException | ParserConfigurationException | SAXException e) {
+                log.error(String.format("Exception while reading %d %s", fileId, name), e);
             }
-        }
-        catch (DataverseException | IOException e) {
-            log.error(String.format("Exception while reading %d %s", fileId, name), e);
         }
         return false;
     }
