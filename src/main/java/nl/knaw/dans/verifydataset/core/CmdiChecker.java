@@ -18,6 +18,7 @@ package nl.knaw.dans.verifydataset.core;
 import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseException;
 import nl.knaw.dans.lib.dataverse.model.file.FileMeta;
+import nl.knaw.dans.verifydataset.api.CmdiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -28,7 +29,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CmdiChecker {
     private static final Logger log = LoggerFactory.getLogger(CmdiChecker.class);
@@ -39,47 +39,51 @@ public class CmdiChecker {
         this.dataverse = dataverse;
     }
 
-    public List<String> find(String pid) throws IOException, DataverseException {
-        return dataverse
-            .dataset(pid).getLatestVersion().getData().getLatestVersion()
-            .getFiles().stream()
-            .filter(this::isCMDI)
-            .map(this::fileName)
-            .collect(Collectors.toList());
-    }
-
     private String fileName(FileMeta f) {
         return (f.getDirectoryLabel() == null ? "" : f.getDirectoryLabel() + "/") + f.getLabel();
     }
 
-    private boolean isCMDI(FileMeta f) {
-        String contentType = f.getDataFile().getContentType();
-        int fileId = f.getDataFile().getId();
-        String name = fileName(f);
-        String extension = f.getLabel().toLowerCase().replaceAll(".*[.]", "");
-        var extensions = List.of("xml", "cmdi");
-        if (extensions.contains(extension) || contentType.toLowerCase().endsWith("xml")) {
-            try {
-                log.debug(String.format("requesting %d %s", fileId, name));
-                var response = dataverse
-                    .basicFileAccess(fileId)
-                    .getFile();
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode != Response.Status.OK.getStatusCode()) {
-                    log.error(String.format("could not read %d %s, status code:", fileId, name), statusCode);
-                    return false;
+    public CmdiResponse find(String pid) throws IOException, DataverseException {
+        var dcmiResponse = new CmdiResponse();
+        for (FileMeta fileMeta : dataverse
+            .dataset(pid).getLatestVersion().getData().getLatestVersion()
+            .getFiles()) {
+            String contentType = fileMeta.getDataFile().getContentType();
+            int fileId = fileMeta.getDataFile().getId();
+            String name = fileName(fileMeta);
+            String extension = fileMeta.getLabel().toLowerCase().replaceAll(".*[.]", "");
+            var extensions = List.of("xml", "cmdi");
+            if (extensions.contains(extension) || contentType.toLowerCase().endsWith("xml")) {
+                try {
+                    log.debug(String.format("requesting %d %s", fileId, name));
+                    var response = dataverse.basicFileAccess(fileId).getFile();
+                    if (response.getStatusLine().getStatusCode() != Response.Status.OK.getStatusCode()) {
+                        dcmiResponse.getErrorMessages().add(msgIntro(fileId, name) + response.getStatusLine().getReasonPhrase());
+                    } else {
+                        log.debug(String.format("reading %d %s", fileId, name));
+                        try (var is = response.getEntity().getContent()) {
+                            Node xmlns = documentBuilderFactory.newDocumentBuilder().parse(is)
+                                .getDocumentElement().getAttributes().getNamedItem("xmlns");
+                            if (xmlns != null && xmlns.getNodeValue().toLowerCase().endsWith("//www.clarin.eu/cmd/"))
+                                dcmiResponse.getCmdiFiles().add(fileName(fileMeta));
+                        }
+                    }
                 }
-                log.debug(String.format("reading %d %s", fileId, name));
-                try (var is = response.getEntity().getContent()) {
-                    Node xmlns = documentBuilderFactory.newDocumentBuilder().parse(is)
-                        .getDocumentElement().getAttributes().getNamedItem("xmlns");
-                    return xmlns != null && xmlns.getNodeValue().toLowerCase().endsWith("//www.clarin.eu/cmd/");
+                catch (DataverseException | IOException | ParserConfigurationException | SAXException e) {
+                    dcmiResponse.getErrorMessages().add(msgIntro(fileId, name) + e);
                 }
-            }
-            catch (DataverseException | IOException | ParserConfigurationException | SAXException e) {
-                log.error(String.format("Exception while reading %d %s", fileId, name), e);
             }
         }
-        return false;
+        if (dcmiResponse.getCmdiFiles().size() > 0)
+            dcmiResponse.setStatus("yes");
+        else if (dcmiResponse.getErrorMessages().size() == 0)
+            dcmiResponse.setStatus("no");
+        else
+            dcmiResponse.setStatus("unknown");
+        return dcmiResponse;
+    }
+
+    private String msgIntro(int fileId, String name) {
+        return String.format("fileID=%d %s CAUSED ", fileId, name);
     }
 }

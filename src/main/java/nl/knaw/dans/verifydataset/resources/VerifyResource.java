@@ -18,7 +18,7 @@ package nl.knaw.dans.verifydataset.resources;
 import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseException;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
-import nl.knaw.dans.verifydataset.api.VerifyResponse;
+import nl.knaw.dans.verifydataset.api.RuleResponse;
 import nl.knaw.dans.verifydataset.core.CmdiChecker;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 import nl.knaw.dans.verifydataset.core.rule.MetadataRule;
@@ -88,7 +88,7 @@ public class VerifyResource {
             HashMap<String, List<String>> messages = new HashMap<>();
             rules.forEach((name, rule) -> messages.put(name, rule.verify(blocks)));
             // ok->accepted when we change to asynchronous
-            return Response.ok(new VerifyResponse(messages)).build();
+            return Response.ok(new RuleResponse(messages)).build();
         }
         catch (IOException e) {
             throw new InternalServerErrorException(e);

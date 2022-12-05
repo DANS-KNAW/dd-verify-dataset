@@ -18,13 +18,13 @@ package nl.knaw.dans.verifydataset.api;
 import java.util.List;
 import java.util.Map;
 
-public class VerifyResponse {
+public class RuleResponse {
     private Map<String, List<String>> errors;
 
-    public VerifyResponse() {
+    public RuleResponse() {
     }
 
-    public VerifyResponse(Map<String, List<String>> errors) {
+    public RuleResponse(Map<String, List<String>> errors) {
         this.errors = errors;
     }
 
