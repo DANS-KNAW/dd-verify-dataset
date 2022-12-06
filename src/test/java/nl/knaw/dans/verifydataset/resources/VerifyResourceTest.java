@@ -18,13 +18,18 @@ package nl.knaw.dans.verifydataset.resources;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
+import nl.knaw.dans.lib.dataverse.BasicFileAccessApi;
 import nl.knaw.dans.lib.dataverse.DatasetApi;
 import nl.knaw.dans.lib.dataverse.DataverseClient;
+import nl.knaw.dans.lib.dataverse.DataverseException;
 import nl.knaw.dans.lib.dataverse.DataverseResponse;
+import nl.knaw.dans.lib.dataverse.model.dataset.DatasetLatestVersion;
 import nl.knaw.dans.lib.dataverse.model.dataset.DatasetVersion;
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
+import nl.knaw.dans.lib.dataverse.model.file.DataFile;
+import nl.knaw.dans.lib.dataverse.model.file.FileMeta;
+import nl.knaw.dans.verifydataset.api.RuleResponse;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
-import nl.knaw.dans.verifydataset.api.VerifyResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +38,7 @@ import org.mockito.Mockito;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,10 +60,60 @@ public class VerifyResourceTest {
     }
 
     @Test
+    void cmdi() throws IOException, DataverseException {
+
+        var datasetApi = new DatasetApi(null, "", false) {
+
+            @Override
+            public DataverseResponse<DatasetLatestVersion> getLatestVersion() {
+                HashMap<String, MetadataBlock> map = new HashMap<>();
+                var df = new DataFile();
+                df.setId(999);
+                df.setContentType("application/xml");
+                var dv = new DatasetVersion();
+                FileMeta fileMeta = new FileMeta();
+                fileMeta.setLabel("cdmdi.xml");
+                fileMeta.setDataFile(df);
+                dv.setFiles(List.of(fileMeta));
+                var lv = new DatasetLatestVersion();
+                lv.setLatestVersion(dv);
+
+                return new DataverseResponse<>("", new ObjectMapper(), DatasetVersion.class) {
+
+                    @Override
+                    public DatasetLatestVersion getData() {
+                        return lv;
+                    }
+                };
+            }
+        };
+        // neither of the following mocks work, using null instead
+        // (org.mockito.exceptions.misusing.WrongTypeOfReturnValue)
+        // HttpResponse response1 = Mockito.mock(HttpResponse.class);
+        // HttpResponse<String> response2 = (HttpResponse<String>) Mockito.mock(HttpResponse.class);
+        // HttpResponse<String> response3 = new HttpResponse<String>(){...};
+        BasicFileAccessApi fileAccessApi = Mockito.mock(BasicFileAccessApi.class);
+        Mockito.doReturn(null).when(fileAccessApi).getFile();
+        Mockito.doReturn(fileAccessApi).when(dataverse).basicFileAccess(999);
+        Mockito.doReturn(datasetApi).when(dataverse).dataset(Mockito.any(String.class));
+
+        VerifyRequest req = new VerifyRequest();
+        req.setDatasetPid("blabla");
+
+        var actual = EXT.target("/verify/check-cmdi")
+            .request()
+            .post(Entity.entity(req, MediaType.APPLICATION_JSON_TYPE), Response.class);
+        assertEquals(200, actual.getStatus());
+        assertEquals(
+            "{\"status\":\"unknown\",\"cmdiFiles\":[],\"errorMessages\":[\"fileID=999 cdmdi.xml CAUSED java.lang.NullPointerException\"]}",
+            actual.readEntity(String.class));
+    }
+
+    @Test
     void verifyRequest() {
         var citationBlock = readMdb("citation-mb.json");
         var spatialBlock = readMdb("spatial-mb.json");
-        mockDataverse(citationBlock, spatialBlock);
+        mockMetadata(citationBlock, spatialBlock);
 
         VerifyRequest req = new VerifyRequest();
         req.setDatasetPid("blabla");
@@ -67,7 +123,7 @@ public class VerifyResourceTest {
             .post(Entity.entity(req, MediaType.APPLICATION_JSON_TYPE), Response.class);
         assertEquals(200, actual.getStatus());
         // assertEquals("{}", actual.readEntity(String.class));
-        VerifyResponse verifyResponse = actual.readEntity(VerifyResponse.class);
+        RuleResponse verifyResponse = actual.readEntity(RuleResponse.class);
         var actualErrors = verifyResponse.getErrors();
         assertEquals(List.of(
             "author[2] (9999-0000-0001-2281-955X) is not a valid ORCID"
@@ -85,7 +141,7 @@ public class VerifyResourceTest {
     @Test
     void withoutSpatial() {
         var citationBlock = readMdb("citation-mb.json");
-        mockDataverse(citationBlock, null);
+        mockMetadata(citationBlock, null);
 
         VerifyRequest req = new VerifyRequest();
         req.setDatasetPid("blabla");
@@ -99,7 +155,7 @@ public class VerifyResourceTest {
             actual.readEntity(String.class));
     }
 
-    private void mockDataverse(MetadataBlock citationBlock, MetadataBlock spatialBlock) {
+    private void mockMetadata(MetadataBlock citationBlock, MetadataBlock spatialBlock) {
         HashMap<String, MetadataBlock> map = new HashMap<>();
         map.put("citation", citationBlock);
         if (spatialBlock != null)

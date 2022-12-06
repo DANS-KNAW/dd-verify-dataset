@@ -69,7 +69,7 @@ public class CmdiChecker {
                         }
                     }
                 }
-                catch (DataverseException | IOException | ParserConfigurationException | SAXException e) {
+                catch (Exception e) {
                     dcmiResponse.getErrorMessages().add(msgIntro(fileId, name) + e);
                 }
             }
