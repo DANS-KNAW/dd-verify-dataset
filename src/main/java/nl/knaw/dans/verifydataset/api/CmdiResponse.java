@@ -17,6 +17,7 @@ package nl.knaw.dans.verifydataset.api;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class CmdiResponse {
     private String status;
@@ -48,5 +49,29 @@ public class CmdiResponse {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        CmdiResponse that = (CmdiResponse) o;
+        return status.equals(that.status) && cmdiFiles.equals(that.cmdiFiles) && errorMessages.equals(that.errorMessages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, cmdiFiles, errorMessages);
+    }
+
+    @Override
+    public String toString() {
+        return "CmdiResponse{" +
+            "status='" + status + '\'' +
+            ", cmdiFiles=" + cmdiFiles +
+            ", errorMessages=" + errorMessages +
+            '}';
     }
 }

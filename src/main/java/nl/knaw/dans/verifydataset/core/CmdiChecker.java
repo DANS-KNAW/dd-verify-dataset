@@ -15,27 +15,24 @@
  */
 package nl.knaw.dans.verifydataset.core;
 
-import nl.knaw.dans.lib.dataverse.DataverseClient;
 import nl.knaw.dans.lib.dataverse.DataverseException;
 import nl.knaw.dans.lib.dataverse.model.file.FileMeta;
 import nl.knaw.dans.verifydataset.api.CmdiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
 
 public class CmdiChecker {
     private static final Logger log = LoggerFactory.getLogger(CmdiChecker.class);
     private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    private final DataverseClient dataverse;
+    private final DataverseClientWrapper dataverse;
 
-    public CmdiChecker(DataverseClient dataverse) {
+    public CmdiChecker(DataverseClientWrapper dataverse) {
         this.dataverse = dataverse;
     }
 
@@ -45,9 +42,7 @@ public class CmdiChecker {
 
     public CmdiResponse find(String pid) throws IOException, DataverseException {
         var dcmiResponse = new CmdiResponse();
-        for (FileMeta fileMeta : dataverse
-            .dataset(pid).getLatestVersion().getData().getLatestVersion()
-            .getFiles()) {
+        for (FileMeta fileMeta : dataverse.getFiles(pid)) {
             String contentType = fileMeta.getDataFile().getContentType();
             int fileId = fileMeta.getDataFile().getId();
             String name = fileName(fileMeta);
@@ -56,10 +51,11 @@ public class CmdiChecker {
             if (extensions.contains(extension) || contentType.toLowerCase().endsWith("xml")) {
                 try {
                     log.debug(String.format("requesting %d %s", fileId, name));
-                    var response = dataverse.basicFileAccess(fileId).getFile();
+                    var response = dataverse.getFile(fileId);
                     if (response.getStatusLine().getStatusCode() != Response.Status.OK.getStatusCode()) {
                         dcmiResponse.getErrorMessages().add(msgIntro(fileId, name) + response.getStatusLine().getReasonPhrase());
-                    } else {
+                    }
+                    else {
                         log.debug(String.format("reading %d %s", fileId, name));
                         try (var is = response.getEntity().getContent()) {
                             Node xmlns = documentBuilderFactory.newDocumentBuilder().parse(is)

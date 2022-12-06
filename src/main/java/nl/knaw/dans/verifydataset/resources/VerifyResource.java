@@ -20,6 +20,7 @@ import nl.knaw.dans.lib.dataverse.DataverseException;
 import nl.knaw.dans.verifydataset.api.VerifyRequest;
 import nl.knaw.dans.verifydataset.api.RuleResponse;
 import nl.knaw.dans.verifydataset.core.CmdiChecker;
+import nl.knaw.dans.verifydataset.core.DataverseClientWrapper;
 import nl.knaw.dans.verifydataset.core.config.VerifyDatasetConfig;
 import nl.knaw.dans.verifydataset.core.rule.MetadataRule;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +50,7 @@ public class VerifyResource {
 
     public VerifyResource(DataverseClient dataverse, VerifyDatasetConfig config) {
         this.dataverse = dataverse;
-        cmdiChecker = new CmdiChecker(dataverse);
+        cmdiChecker = new CmdiChecker(new DataverseClientWrapper(dataverse));
         rules = MetadataRule.configureRules(config);
     }
 

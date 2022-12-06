@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.knaw.dans.verifydataset.rule;
+package nl.knaw.dans.verifydataset.core.rule;
 
 import nl.knaw.dans.lib.dataverse.model.dataset.MetadataBlock;
 import nl.knaw.dans.verifydataset.core.rule.IdentifierHasValidMod11;

@@ -39,6 +39,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class VerifyResourceTest {
 
-    DataverseClient dataverse = Mockito.mock(DataverseClient.class);
-    public final ResourceExtension EXT = ResourceExtension.builder()
+    private DataverseClient dataverse = Mockito.mock(DataverseClient.class);
+    private final ResourceExtension EXT = ResourceExtension.builder()
         .addResource(new VerifyResource(dataverse, loadDistConfig()))
         .build();
 
@@ -87,13 +88,11 @@ public class VerifyResourceTest {
                 };
             }
         };
-        // neither of the following mocks work, using null instead
-        // (org.mockito.exceptions.misusing.WrongTypeOfReturnValue)
-        // HttpResponse response1 = Mockito.mock(HttpResponse.class);
-        // HttpResponse<String> response2 = (HttpResponse<String>) Mockito.mock(HttpResponse.class);
-        // HttpResponse<String> response3 = new HttpResponse<String>(){...};
+        // Mockito does not like the generic method
+        HttpResponse<String> response = null;
+
         BasicFileAccessApi fileAccessApi = Mockito.mock(BasicFileAccessApi.class);
-        Mockito.doReturn(null).when(fileAccessApi).getFile();
+        Mockito.doReturn(response).when(fileAccessApi).getFile();
         Mockito.doReturn(fileAccessApi).when(dataverse).basicFileAccess(999);
         Mockito.doReturn(datasetApi).when(dataverse).dataset(Mockito.any(String.class));
 
